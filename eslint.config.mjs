@@ -9,12 +9,7 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends(
-    'next/core-web-vitals',
-    'next/typescript',
-    // Make sure prettier is last in extends array to override other configs
-    'prettier'
-  ),
+  ...compat.extends('next/core-web-vitals', 'next/typescript', 'prettier'),
   {
     rules: {
       // TypeScript specific rules
@@ -63,6 +58,16 @@ const eslintConfig = [
               pattern: '@/**',
               group: 'internal',
               position: 'after',
+            },
+            {
+              pattern: '@types/**',
+              group: 'type',
+              position: 'after',
+            },
+            {
+              pattern: '../**',
+              group: 'parent',
+              position: 'before',
             },
           ],
           pathGroupsExcludedImportTypes: ['react'],

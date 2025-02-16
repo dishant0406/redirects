@@ -3,7 +3,7 @@ import { GitPullRequestCreateArrowIcon, Search } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
-const Main: React.FC = () => {
+const Main: React.FC = async () => {
   return (
     <div className="h-main p-8">
       <div className="w-full flex items-center justify-between">

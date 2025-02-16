@@ -1,36 +1,14 @@
+import { cookies } from 'next/headers';
+
+import { getUserData } from '@/lib/helpers/getUserData';
+
 import Logo from '../Micro/Logo';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
-const UserAvatar: React.FC = () => {
-  return (
-    <Avatar className="border rounded-full border-input bg-input">
-      <AvatarImage src="https://api.dicebear.com/9.x/notionists/svg" />
-      <AvatarFallback className="w-full h-full flex items-center rounded-full justify-center">
-        RL
-      </AvatarFallback>
-    </Avatar>
-  );
-};
+import LoginAvatar from './Avatar/LoginAvatar';
 
-const getUserAvatarWithTooltip = (): React.ReactNode => {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>
-          <UserAvatar />
-        </TooltipTrigger>
-        <TooltipContent sideOffset={8}>
-          <TooltipContent>
-            <p>Login</p>
-          </TooltipContent>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-};
-
-const Navbar: React.FC = () => {
+const Navbar: React.FC = async () => {
+  const token = (await cookies()).get('token')?.value;
+  const { user } = await getUserData(token);
   return (
     <div className="w-full flex h-nav px-4 items-center justify-between border-b border-input">
       <div className="flex items-center justify-center gap-2">
@@ -40,7 +18,7 @@ const Navbar: React.FC = () => {
           <p className="text-sm -mt-1 font-bold">lazyweb.rocks</p>
         </div>
       </div>
-      {getUserAvatarWithTooltip()}
+      <LoginAvatar user={user || undefined} />
     </div>
   );
 };
