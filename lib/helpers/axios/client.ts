@@ -8,6 +8,7 @@ const axiosClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 60000,
 });
 
 // Request interceptor
@@ -25,6 +26,13 @@ axiosClient.interceptors.request.use(async (config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // Set Content-Length to null to prevent it from being sent
+  config.headers['Content-Length'] = undefined;
+
+  // This is more reliable than 'delete' for Axios headers
+  // You can also try setting the 'maxContentLength' option
+  config.maxContentLength = -1;
 
   return config;
 });

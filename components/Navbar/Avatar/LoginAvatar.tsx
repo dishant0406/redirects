@@ -1,15 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-
 import Cookies from 'js-cookie';
 import { GithubIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { isValidEmail } from '@/lib/helpers';
+import { LOGOUT_ENDPOINT } from '@/lib/constants';
 import { useGithubOAuth } from '@/lib/hooks/useGithubAuth';
 
 import AvatarWithToolTip from '.';
@@ -17,7 +13,6 @@ import AvatarWithToolTip from '.';
 const LoginAvatar: React.FC<{
   user?: User;
 }> = ({ user }) => {
-  const [email, setEmail] = useState('');
   const { initiateOAuth } = useGithubOAuth({
     clientUrl: `${process.env.NEXT_PUBLIC_LAZYWEB_BACKEND_URL}/oauth/github`,
     onSuccess: (token) => {
@@ -28,6 +23,14 @@ const LoginAvatar: React.FC<{
       console.error('OAuth failed:', error);
     },
   });
+
+  const handleLogout = async () => {
+    const BASE_URL = window.location.host;
+    const PROTOCOL = window.location.protocol;
+    const LOGOUT_URL = `${PROTOCOL}//${BASE_URL}${LOGOUT_ENDPOINT}`;
+    await fetch(LOGOUT_URL, { method: 'GET' });
+    window.location.reload();
+  };
 
   if (user) {
     return (
@@ -48,6 +51,7 @@ const LoginAvatar: React.FC<{
                   tooltip="Logout"
                   tooltipDirection="bottom"
                   variant="secondary"
+                  onClick={handleLogout}
                 >
                   Logout
                 </Button>
@@ -73,7 +77,7 @@ const LoginAvatar: React.FC<{
             </p>
           </div>
           <div className="grid gap-2">
-            <div className="grid grid-cols-4 items-center ">
+            {/* <div className="grid grid-cols-4 items-center ">
               <Label htmlFor="width">Email</Label>
               <Input
                 className="col-span-3 h-8"
@@ -83,22 +87,26 @@ const LoginAvatar: React.FC<{
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </div>
+            </div> */}
             <div className="w-full flex items-center gap-4 mt-4">
-              <Button
+              {/* <Button
                 className="w-full"
                 disabled={!isValidEmail(email)}
                 tooltip="Login using magic link"
                 tooltipDirection="bottom"
               >
                 Magic Login
-              </Button>
+              </Button> */}
               <Button
-                className="w-full"
-                tooltip="Login using Github"
+                className="!w-full"
                 tooltipDirection="bottom"
                 variant="secondary"
-                onClick={initiateOAuth}
+                onClick={() =>
+                  initiateOAuth(
+                    `${process.env.NEXT_PUBLIC_LAZYWEB_BACKEND_URL}/oauth/redirect/` +
+                      encodeURIComponent(btoa(window.location.href))
+                  )
+                }
               >
                 <GithubIcon className="w-4 h-4" />
                 Github

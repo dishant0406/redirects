@@ -37,19 +37,22 @@ export const useGithubOAuth = ({
   // Handle incoming messages from popup
   const handleMessage = useCallback(
     (event: MessageEvent) => {
-      // Verify origin matches your backend URL
-      if (event.origin !== new URL(clientUrl).origin) {
-        return;
-      }
-
       try {
-        const { jwt, error } = event.data;
+        const { jwt, error, state: receivedState } = event.data;
+
+        // Verify state parameter matches
+        const savedState = sessionStorage.getItem('oauth_state');
+        if (receivedState !== savedState) {
+          throw new Error('Invalid state parameter');
+        }
 
         if (error) {
           throw new Error(error);
         }
 
         if (jwt) {
+          // Clear state after successful authentication
+          sessionStorage.removeItem('oauth_state');
           setState((prev) => ({ ...prev, token: jwt, isLoading: false }));
           onSuccess?.(jwt);
         }
@@ -63,76 +66,95 @@ export const useGithubOAuth = ({
         onError?.(new Error(errorMessage));
       }
     },
-    [clientUrl, onSuccess, onError]
+    [onSuccess, onError]
   );
 
   // Initialize OAuth flow
-  const initiateOAuth = useCallback(() => {
-    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+  const initiateOAuth = useCallback(
+    (frontendUrl: string) => {
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-    try {
-      // Calculate center position for popup
-      const left = window.innerWidth / 2 - width / 2;
-      const top = window.innerHeight / 2 - height / 2;
+      try {
+        // Verify frontend URL is valid
+        const frontendOrigin = new URL(frontendUrl).origin;
 
-      // Secure popup options
-      const options = {
-        width,
-        height,
-        left,
-        top,
-        location: 'no',
-        toolbar: 'no',
-        status: 'no',
-        directories: 'no',
-        menubar: 'no',
-        scrollbars: 'yes',
-        resizable: 'no',
-        centerscreen: 'yes',
-      };
+        // Add event listener that validates message origin
+        const messageHandler = (event: MessageEvent) => {
+          if (event.origin !== frontendOrigin) {
+            console.warn(`Invalid origin: ${event.origin}. Expected: ${frontendOrigin}`);
+            return;
+          }
+          handleMessage(event);
+        };
 
-      const optionsString = Object.entries(options)
-        .map(([key, value]) => `${key}=${value}`)
-        .join(',');
+        window.addEventListener('message', messageHandler);
 
-      // Add state parameter for CSRF protection
-      const state = crypto.getRandomValues(new Uint8Array(16)).join('');
-      sessionStorage.setItem('oauth_state', state);
+        // Calculate center position for popup
+        const left = window.innerWidth / 2 - width / 2;
+        const top = window.innerHeight / 2 - height / 2;
 
-      const oauthUrl = new URL(clientUrl);
-      oauthUrl.searchParams.append('state', state);
+        // Secure popup options
+        const options = {
+          width,
+          height,
+          left,
+          top,
+          location: 'no',
+          toolbar: 'no',
+          status: 'no',
+          directories: 'no',
+          menubar: 'no',
+          scrollbars: 'yes',
+          resizable: 'no',
+          centerscreen: 'yes',
+        };
 
-      // Open popup and add event listener
-      const popup = window.open(oauthUrl.toString(), 'Github OAuth', optionsString);
+        const optionsString = Object.entries(options)
+          .map(([key, value]) => `${key}=${value}`)
+          .join(',');
 
-      if (!popup) {
-        throw new Error('Failed to open OAuth popup. Please enable popups for this site.');
-      }
+        // Add state parameter for CSRF protection
+        const state = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+          .map((byte) => byte.toString(16).padStart(2, '0'))
+          .join('');
+        sessionStorage.setItem('oauth_state', state);
 
-      window.addEventListener('message', handleMessage);
+        // Add frontend URL and state to OAuth URL
+        const oauthUrl = new URL(clientUrl);
+        oauthUrl.searchParams.append('state', state);
+        oauthUrl.searchParams.append('redirect_uri', frontendUrl);
 
-      // Check if popup was closed
-      const checkClosed = setInterval(() => {
-        if (popup.closed) {
-          cleanup();
-          clearInterval(checkClosed);
-          setState((prev) => ({
-            ...prev,
-            isLoading: false,
-            error: new Error('Authentication cancelled'),
-          }));
+        // Open popup and add event listener
+        const popup = window.open(oauthUrl.toString(), 'Github OAuth', optionsString);
+
+        if (!popup) {
+          throw new Error('Failed to open OAuth popup. Please enable popups for this site.');
         }
-      }, 1000);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to initiate OAuth';
-      setState((prev) => ({
-        ...prev,
-        error: new Error(errorMessage),
-        isLoading: false,
-      }));
-      onError?.(new Error(errorMessage));
-    }
-  }, [width, height, clientUrl, handleMessage, cleanup, onError]);
+
+        // Check if popup was closed
+        const checkClosed = setInterval(() => {
+          if (popup.closed) {
+            window.removeEventListener('message', messageHandler);
+            clearInterval(checkClosed);
+            setState((prev) => ({
+              ...prev,
+              isLoading: false,
+              error: new Error('Authentication cancelled'),
+            }));
+          }
+        }, 1000);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to initiate OAuth';
+        setState((prev) => ({
+          ...prev,
+          error: new Error(errorMessage),
+          isLoading: false,
+        }));
+        onError?.(new Error(errorMessage));
+      }
+    },
+    [width, height, clientUrl, handleMessage, onError]
+  );
 
   // Cleanup on unmount
   useEffect(() => {

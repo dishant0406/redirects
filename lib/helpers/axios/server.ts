@@ -78,7 +78,11 @@ class ApiClient {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       apiError.status = error.response.status;
-      apiError.message = (error.response.data as any)?.message || error.message;
+      interface ErrorResponseData {
+        message?: string;
+      }
+      const responseData = error.response.data as ErrorResponseData;
+      apiError.message = responseData.message || error.message;
       apiError.details = error.response.data;
     } else if (error.request) {
       // The request was made but no response was received
@@ -140,5 +144,5 @@ class ApiClient {
 }
 
 // Create and export a singleton instance
-const apiClient = new ApiClient();
-export default apiClient;
+const axiosClientServer = new ApiClient();
+export default axiosClientServer;

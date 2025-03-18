@@ -60,6 +60,16 @@ export default {
         nav: 'var(--nav-height)',
         main: 'var(--dashboard-height)',
       },
+
+      animation: {
+        'smooth-shimmer': 'smooth-shimmer 2.5s infinite',
+      },
+      keyframes: {
+        'smooth-shimmer': {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+      },
     },
   },
   // eslint-disable-next-line @typescript-eslint/no-require-imports

@@ -2,9 +2,12 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { headers } from 'next/headers';
 
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { LOGOUT_ENDPOINT } from '@/lib/constants';
 import axiosClientServer from '@/lib/helpers/axios/server';
+import { Toaster } from '@/lib/toast';
 
 import type { Metadata } from 'next';
+
 import './globals.css';
 
 const geistSans = Geist({
@@ -28,21 +31,28 @@ const RootLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const { data, error } = await axiosClientServer.get<User>('/api/auth/me');
+  const { data, error } = await axiosClientServer.get<UserResponse>('/api/auth/me');
 
   if (error) {
     const BASE_URL = (await headers()).get('host');
     const PROTOCOL = (await headers()).get('x-forwarded-proto');
-    const LOGOUT_ENDPOINT = '/api/auth/logout';
     const LOGOUT_URL = `${PROTOCOL}://${BASE_URL}${LOGOUT_ENDPOINT}`;
     await fetch(LOGOUT_URL, { method: 'GET' });
   }
+
+  const userDetails = {
+    email: data?.email,
+    id: data?._id,
+  };
+
+  const encodedUserDetails = JSON.stringify(userDetails);
+  const encodedUserDetailsBase64 = Buffer.from(encodedUserDetails).toString('base64');
 
   return (
     <html suppressHydrationWarning lang="en">
       <body
         className={`${geistSans.variable} dark ${geistMono.variable} antialiased`}
-        data-user-email={data?.email}
+        data-body={encodedUserDetailsBase64}
       >
         <ThemeProvider
           disableTransitionOnChange
@@ -52,6 +62,7 @@ const RootLayout = async ({
         >
           {children}
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

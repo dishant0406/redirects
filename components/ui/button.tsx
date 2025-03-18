@@ -48,7 +48,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     if (tooltip) {
       return (
-        <Tooltip className="w-full" content={tooltip} position={tooltipDirection}>
+        <Tooltip content={tooltip} position={tooltipDirection}>
           <Comp ref={ref} className={cn(buttonVariants({ variant, size, className }))} {...props} />
         </Tooltip>
       );
