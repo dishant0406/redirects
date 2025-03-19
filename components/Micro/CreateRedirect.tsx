@@ -135,16 +135,14 @@ export const CreateRedirectModal: React.FC<ModalProps> = ({ isOpen, setIsOpen, r
     }
   };
 
-  // Handle domain input changes
-  const handleDomainChange = (field: string, value: string) => {
+  // Add a new function for when the input loses focus
+  const handleDomainBlur = (field: string, value: string) => {
     let processedValue = value;
 
-    // Always strip paths and queries from fromDomain
+    // Only process URLs when the input loses focus
     if (field === 'fromDomain') {
       processedValue = processFromDomain(value);
-    }
-    // Process toDomain based on forwarding settings
-    else if (field === 'toDomain') {
+    } else if (field === 'toDomain') {
       if (formData.pathForwarding || formData.queryForwarding) {
         processedValue = processUrl(value, formData.pathForwarding, formData.queryForwarding);
       }
@@ -239,7 +237,8 @@ export const CreateRedirectModal: React.FC<ModalProps> = ({ isOpen, setIsOpen, r
             id="fromDomain"
             placeholder="From Domain (e.g., example.com)"
             value={formData.fromDomain}
-            onChange={(e) => handleDomainChange('fromDomain', e.target.value)}
+            onBlur={(e) => handleDomainBlur('fromDomain', e.target.value)}
+            onChange={(e) => handleChange('fromDomain', e.target.value)}
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -248,7 +247,8 @@ export const CreateRedirectModal: React.FC<ModalProps> = ({ isOpen, setIsOpen, r
             id="toDomain"
             placeholder="To Domain"
             value={formData.toDomain}
-            onChange={(e) => handleDomainChange('toDomain', e.target.value)}
+            onBlur={(e) => handleDomainBlur('toDomain', e.target.value)}
+            onChange={(e) => handleChange('toDomain', e.target.value)}
           />
         </div>
         <div className="flex flex-col gap-2">
