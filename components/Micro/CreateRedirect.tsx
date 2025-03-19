@@ -91,7 +91,7 @@ export const CreateRedirectModal: React.FC<ModalProps> = ({ isOpen, setIsOpen, r
   useEffect(() => {
     if (redirect) {
       setFormData({
-        fromDomain: formatUrl(redirect.fromDomain)?.domain || '',
+        fromDomain: formatUrl(redirect.fromDomain)?.formattedUrl || '',
         toDomain: formatUrl(redirect.toDomain)?.formattedUrl,
         redirectType: redirect.redirectType,
         pathForwarding: redirect.pathForwarding,
