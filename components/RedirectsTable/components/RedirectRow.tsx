@@ -2,9 +2,11 @@
 import React, { useEffect, useState } from 'react';
 
 import { ChevronDown, ExternalLink, Pencil, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 
 import { CreateRedirectModal } from '@/components/Micro/CreateRedirect';
 import { deleteRedirect, verifyStatus } from '@/lib/api';
+import { formatUrl } from '@/lib/helpers';
 import { promiseToast } from '@/lib/toast';
 import useRedirectStore from '@/lib/zustand';
 
@@ -111,7 +113,7 @@ export const RedirectRow: React.FC<RedirectRowProps> = ({
   return (
     <>
       <tr
-        className="group transition-colors hover:bg-muted/50 cursor-pointer"
+        className="group transition-colors hover:bg-muted/50 "
         onClick={() => onRedirectClick?.(redirect)}
       >
         <td className="p-4">
@@ -124,9 +126,21 @@ export const RedirectRow: React.FC<RedirectRowProps> = ({
         </td>
         <td className="p-4">
           <div className="space-y-1.5">
-            <div className="font-medium text-foreground">{redirect.fromDomain}</div>
+            <Link
+              className="font-medium text-foreground"
+              href={formatUrl(redirect.fromDomain).formattedUrl}
+              target="_blank"
+            >
+              {redirect.fromDomain}
+            </Link>
             <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <ExternalLink size={14} />
+              <ExternalLink
+                className="cursor-pointer hover:scale-110 transition-transform"
+                size={14}
+                onClick={() => {
+                  window.open(formatUrl(redirect.toDomain).formattedUrl, '_blank');
+                }}
+              />
               {redirect.toDomain}
             </div>
           </div>
