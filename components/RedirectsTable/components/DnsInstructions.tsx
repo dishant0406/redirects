@@ -10,17 +10,19 @@ interface DnsInstructionsProps {
 export const DnsInstructions: React.FC<DnsInstructionsProps> = ({ status, isPolling }) => {
   if (status.status.success) {
     return (
-      <div className="space-y-6 max-w-full">
-        <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-          <div className="flex items-start gap-4">
+      <div className="space-y-4 max-w-full">
+        <div className="bg-accent/10 border shadow-custom border-accent/20 rounded-lg p-3 md:p-4">
+          <div className="flex items-start gap-2 md:gap-4">
             <div className="mt-1">
-              <ShieldCheck className="h-6 w-6 text-accent-foreground" />
+              <ShieldCheck className="h-5 w-5 md:h-6 md:w-6 text-accent-foreground" />
             </div>
             <div>
-              <h3 className="text-foreground font-medium mb-2">{status.status.title}</h3>
-              <p className="text-muted-foreground">{status.status.summary}</p>
+              <h3 className="text-foreground text-sm md:text-base font-medium mb-1 md:mb-2">
+                {status.status.title}
+              </h3>
+              <p className="text-muted-foreground text-xs md:text-sm">{status.status.summary}</p>
               {status.status.detail && (
-                <div className="mt-4 flex items-center gap-2 text-sm">
+                <div className="mt-3 md:mt-4 flex items-center gap-2 text-xs md:text-sm">
                   {status.status.certificateStatus === 'pending' ? (
                     <>
                       <Loader2 className="animate-spin text-accent-foreground" size={14} />
@@ -40,17 +42,19 @@ export const DnsInstructions: React.FC<DnsInstructionsProps> = ({ status, isPoll
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 text-sm text-muted-foreground border border-border">
+        <div className="bg-card rounded-lg p-3 md:p-4 text-xs md:text-sm text-muted-foreground border border-border">
           <div className="space-y-2">
             <h4 className="font-medium text-foreground">DNS Configuration</h4>
-            <div className="flex flex-col mt-2 gap-2">
-              <div>
+            <div className="flex flex-col mt-2 gap-1 md:gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center">
                 <span className="text-muted-foreground">Record Type:</span>
-                <span className="text-foreground ml-2">{status.dnsRecords.type}</span>
+                <span className="text-foreground sm:ml-2">{status.dnsRecords.type}</span>
               </div>
-              <div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
                 <span className="text-muted-foreground">Value:</span>
-                <span className="text-foreground ml-2">{status.dnsRecords.addresses[0]}</span>
+                <span className="text-foreground sm:ml-2 break-all">
+                  {status.dnsRecords.addresses[0]}
+                </span>
               </div>
             </div>
           </div>
@@ -60,38 +64,45 @@ export const DnsInstructions: React.FC<DnsInstructionsProps> = ({ status, isPoll
   }
 
   return (
-    <div className="space-y-6 max-w-full">
-      <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
-        <h3 className="text-destructive font-medium mb-2">{status.status.title}</h3>
-        <p className="text-muted-foreground">{status.status.summary}</p>
+    <div className="space-y-4 md:space-y-6 max-w-full">
+      <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 md:p-4">
+        <h3 className="text-destructive text-sm md:text-base font-medium mb-1 md:mb-2">
+          {status.status.title}
+        </h3>
+        <p className="text-muted-foreground text-xs md:text-sm">{status.status.summary}</p>
       </div>
 
-      <div className="space-y-4">
-        <h4 className="font-medium text-foreground">Required DNS Record</h4>
-        <div className="bg-card rounded-lg p-4 mt-2 font-mono text-sm border border-border">
-          <div className="flex flex-col gap-2">
-            <div>
+      <div className="space-y-3 md:space-y-4">
+        <h4 className="font-medium text-sm md:text-base text-foreground">Required DNS Record</h4>
+        <div className="bg-card rounded-lg p-3 md:p-4 mt-2 font-mono text-xs md:text-sm border border-border">
+          <div className="flex flex-col gap-1 md:gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center">
               <span className="text-muted-foreground">Type:</span>
-              <span className="text-foreground ml-2">{status.required?.recordType}</span>
+              <span className="text-foreground sm:ml-2">{status.required?.recordType}</span>
             </div>
-            <div>
+            <div className="flex flex-col sm:flex-row sm:items-center">
               <span className="text-muted-foreground">Value:</span>
-              <span className="text-foreground ml-2">{status.required?.value}</span>
+              <span className="text-foreground sm:ml-2 break-all">{status.required?.value}</span>
             </div>
           </div>
         </div>
       </div>
 
       {status.instructions && (
-        <div className="space-y-4">
-          <h4 className="font-medium text-foreground">{status.instructions.title}</h4>
-          <ol className="space-y-3">
+        <div className="space-y-3 md:space-y-4">
+          <h4 className="font-medium text-sm md:text-base text-foreground">
+            {status.instructions.title}
+          </h4>
+          <ol className="space-y-2 md:space-y-3">
             {status.instructions.steps.map((step) => (
-              <li key={step.step} className="flex items-start gap-3 text-muted-foreground">
-                <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-medium text-muted-foreground">
+              <li
+                key={step.step}
+                className="flex items-start gap-2 md:gap-3 text-xs md:text-sm text-muted-foreground"
+              >
+                <span className="flex-shrink-0 flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-muted text-xs font-medium text-muted-foreground">
                   {step.step}
                 </span>
-                {step.description}
+                <span>{step.description}</span>
               </li>
             ))}
           </ol>
@@ -99,7 +110,7 @@ export const DnsInstructions: React.FC<DnsInstructionsProps> = ({ status, isPoll
       )}
 
       {status.support && (
-        <div className="bg-card rounded-lg p-4 text-sm text-muted-foreground border border-border">
+        <div className="bg-card rounded-lg p-3 md:p-4 text-xs md:text-sm text-muted-foreground border border-border">
           <p>{status.support.additionalInfo}</p>
           <p className="mt-2">
             Need help?{' '}
@@ -115,7 +126,7 @@ export const DnsInstructions: React.FC<DnsInstructionsProps> = ({ status, isPoll
       )}
 
       {isPolling && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
           <Loader2 className="animate-spin" size={14} />
           Checking DNS records every 5 seconds...
         </div>

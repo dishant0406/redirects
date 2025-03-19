@@ -82,7 +82,7 @@ export const RedirectRow: React.FC<RedirectRowProps> = ({
         if (success) {
           setIsPolling(false);
         }
-      }, 5000); // Poll every 30 seconds
+      }, 5000); // Poll every 5 seconds
     } else if (isPolling && domainStatus?.status.success) {
       interval = setInterval(async () => {
         const success = await fetchStatus();
@@ -103,17 +103,12 @@ export const RedirectRow: React.FC<RedirectRowProps> = ({
     e.stopPropagation();
     const newIsExpanded = !isExpanded;
     setIsExpanded(newIsExpanded);
-    // if (!isPolling) {
-    //   setIsPolling(true);
-    // } else if (!newIsExpanded) {
-    //   setIsPolling(false);
-    // }
   };
 
   return (
     <>
       <tr
-        className="group transition-colors hover:bg-muted/50 "
+        className="group transition-colors hover:bg-muted/50 table-row"
         onClick={() => onRedirectClick?.(redirect)}
       >
         <td className="p-4">
@@ -127,17 +122,18 @@ export const RedirectRow: React.FC<RedirectRowProps> = ({
         <td className="p-4">
           <div className="space-y-1.5">
             <Link
-              className="font-medium text-foreground"
+              className="font-medium md:text-base text-sm whitespace-nowrap text-foreground"
               href={formatUrl(redirect.fromDomain).formattedUrl}
               target="_blank"
             >
               {redirect.fromDomain}
             </Link>
-            <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <div className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
               <ExternalLink
                 className="cursor-pointer hover:scale-110 transition-transform"
                 size={14}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   window.open(formatUrl(redirect.toDomain).formattedUrl, '_blank');
                 }}
               />
@@ -164,7 +160,7 @@ export const RedirectRow: React.FC<RedirectRowProps> = ({
         </td>
       </tr>
       {isExpanded && domainStatus && (
-        <tr className="bg-muted/30">
+        <tr className="bg-muted/30 table-row">
           <td className="p-6" colSpan={4}>
             <DnsInstructions isPolling={isPolling} status={domainStatus} />
           </td>

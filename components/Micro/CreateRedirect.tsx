@@ -195,7 +195,7 @@ export const CreateRedirectModal: React.FC<ModalProps> = ({ isOpen, setIsOpen, r
 
   return (
     <Modal
-      className="!w-[50vw]"
+      className="!w-[95%] md:!w-[50vw]"
       footer={
         <ModalFooter className="w-full flex justify-end">
           <Button disabled={isButtonDisabled} tooltip={error} onClick={handleSubmit}>
@@ -209,7 +209,7 @@ export const CreateRedirectModal: React.FC<ModalProps> = ({ isOpen, setIsOpen, r
     >
       <div className="w-full flex flex-col gap-4">
         {(showPathForwardingAlert || showQueryForwardingAlert || true) && (
-          <div className="p-4 mb-2 bg-background shadow-custom border border-input rounded-md text-text-primary">
+          <div className="p-4 mb-2 md:text-base text-sm bg-background shadow-custom border border-input rounded-md text-text-primary">
             <p className="font-medium">Important:</p>
             <ul className="list-disc ml-5 mt-1">
               <li>
@@ -231,7 +231,9 @@ export const CreateRedirectModal: React.FC<ModalProps> = ({ isOpen, setIsOpen, r
         )}
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="fromDomain">From Domain</Label>
+          <Label className="md:text-base text-xs" htmlFor="fromDomain">
+            From Domain
+          </Label>
           <Input
             disabled={!!redirect?.fromDomain}
             id="fromDomain"
@@ -242,7 +244,9 @@ export const CreateRedirectModal: React.FC<ModalProps> = ({ isOpen, setIsOpen, r
           />
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="toDomain">To Domain</Label>
+          <Label className="md:text-base text-xs" htmlFor="toDomain">
+            To Domain
+          </Label>
           <Input
             id="toDomain"
             placeholder="To Domain"

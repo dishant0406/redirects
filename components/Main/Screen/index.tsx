@@ -2,12 +2,9 @@
 
 import { useEffect } from 'react';
 
-import { Search } from 'lucide-react';
-
 import CreateRedirect from '@/components/Micro/CreateRedirect';
 import LottiePlayer from '@/components/Micro/LottiePlayer';
 import RedirectsTable from '@/components/RedirectsTable';
-import { Input } from '@/components/ui/input';
 import useIsLoggedIn from '@/lib/hooks/useIsLogedIn';
 import useRedirectStore from '@/lib/zustand';
 
@@ -53,11 +50,10 @@ const Screen = ({ redirectsServer }: Props) => {
   }
 
   return (
-    <div className="h-main p-8">
+    <div className="h-main p-4 md:p-8">
       <div className="w-full flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Redirects</h1>
+        <h1 className="md:text-2xl text-xl font-bold">Redirects</h1>
         <div className="flex justify-end gap-4">
-          <Input placeholder="Search for a redirect" startIcon={<Search className="h-4 w-4" />} />
           <CreateRedirect />
         </div>
       </div>

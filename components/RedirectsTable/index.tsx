@@ -12,7 +12,7 @@ interface RedirectsTableProps {
 const RedirectsTable = ({ redirects, onSelect, onRedirectClick }: RedirectsTableProps) => {
   return (
     <div className="bg-background rounded-lg overflow-hidden">
-      <div className="bg-card rounded-lg shadow-lg overflow-hidden border border-border">
+      <div className="bg-card rounded-lg shadow-custom overflow-hidden border border-border">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <TableHeader />
