@@ -12,7 +12,8 @@ import AvatarWithToolTip from '.';
 
 const LoginAvatar: React.FC<{
   user?: User;
-}> = ({ user }) => {
+  children?: React.ReactNode;
+}> = ({ user, children }) => {
   const { initiateOAuth } = useGithubOAuth({
     clientUrl: `${process.env.NEXT_PUBLIC_LAZYWEB_BACKEND_URL}/oauth/github`,
     onSuccess: (token) => {
@@ -35,9 +36,7 @@ const LoginAvatar: React.FC<{
   if (user) {
     return (
       <Popover>
-        <PopoverTrigger>
-          <AvatarWithToolTip user={user} />
-        </PopoverTrigger>
+        <PopoverTrigger></PopoverTrigger>
         <PopoverContent className="w-80" sideOffset={5}>
           <div className="grid gap-4">
             <div className="space-y-2">
@@ -65,9 +64,7 @@ const LoginAvatar: React.FC<{
 
   return (
     <Popover>
-      <PopoverTrigger>
-        <AvatarWithToolTip />
-      </PopoverTrigger>
+      <PopoverTrigger>{children || <AvatarWithToolTip />}</PopoverTrigger>
       <PopoverContent className="w-80" sideOffset={5}>
         <div className="grid gap-4">
           <div className="space-y-2">
