@@ -1,5 +1,4 @@
 import { Geist, Geist_Mono } from 'next/font/google';
-import Head from 'next/head';
 import { headers } from 'next/headers';
 import Script from 'next/script';
 
@@ -52,7 +51,7 @@ const RootLayout = async ({
 
   return (
     <html suppressHydrationWarning lang="en">
-      <Head>
+      <head>
         <meta content="website" property="og:type" />
         <meta content="https://redirect.lazyweb.rocks/" property="og:url" />
         <meta
@@ -82,7 +81,7 @@ const RootLayout = async ({
           content="https://cdn.jsdelivr.net/gh/dishant0406/images-repo@master/redirect.png"
           property="twitter:image"
         />
-      </Head>
+      </head>
       <Script
         defer
         data-website-id="15e4102e-1090-4e73-951b-ae039e7cf88c"
